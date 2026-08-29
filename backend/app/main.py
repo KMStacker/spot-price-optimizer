@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
 from .database import Base, engine, get_db
-from .models import ElectricityPrice
+from .models import SpotPrice
 from .optimizer import find_cheapest_window
 from .schemas import CheapestWindowResponse, FetchPricesResponse, PriceItemResponse
 from .services import fetch_and_store_prices
@@ -51,13 +51,13 @@ def get_prices(
     end_before: Optional[datetime] = Query(None),
     db: Session = Depends(get_db),
 ):
-    query = db.query(ElectricityPrice)
+    query = db.query(SpotPrice)
     if start_after:
-        query = query.filter(ElectricityPrice.start_time >= start_after)
+        query = query.filter(SpotPrice.start_time >= start_after)
     if end_before:
-        query = query.filter(ElectricityPrice.end_time <= end_before)
+        query = query.filter(SpotPrice.end_time <= end_before)
 
-    return query.order_by(ElectricityPrice.start_time.asc()).all()
+    return query.order_by(SpotPrice.start_time.asc()).all()
 
 @app.get(
     "/api/prices/cheapest-window",
@@ -79,7 +79,7 @@ def get_cheapest_window(
     ),
     db: Session = Depends(get_db),
 ):
-    prices = db.query(ElectricityPrice).order_by(ElectricityPrice.start_time.asc()).all()
+    prices = db.query(SpotPrice).order_by(SpotPrice.start_time.asc()).all()
     if not prices:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
