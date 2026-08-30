@@ -25,12 +25,14 @@ def find_cheapest_window(
     ]
     df = pd.DataFrame(data)
 
-    df = df.sort_values(by="start_time").reset_index(drop=True)
+    df = df.sort_values(by="start_time")
 
     if start_after:
         df = df[df["start_time"] >= start_after]
     if end_before:
         df = df[df["end_time"] <= end_before]
+
+    df = df.reset_index(drop=True)
 
     intervals = int(hours * 4)
 

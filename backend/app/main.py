@@ -1,10 +1,12 @@
+from contextlib import asynccontextmanager
 from datetime import datetime
+import logging
 from typing import List, Optional
 from fastapi import Depends, FastAPI, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-from .database import Base, engine, get_db
+from .database import Base, engine, get_db, SessionLocal
 from .models import SpotPrice
 from .optimizer import find_cheapest_window
 from .schemas import CheapestWindowResponse, FetchPricesResponse, PriceItemResponse
@@ -12,12 +14,27 @@ from .services import fetch_and_store_prices
 
 Base.metadata.create_all(bind=engine)
 
+logger = logging.getLogger("uvicorn.info")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logger.info("Initializing application: fetching latest spot prices...")
+    db = SessionLocal()
+    try:
+        count = fetch_and_store_prices(db)
+        logger.info(f"Startup price fetch complete. Processed {count} records.")
+    except Exception as e:
+        logger.error(f"Failed to fetch prices on startup: {str(e)}")
+    finally:
+        db.close()
+    yield
+
 app = FastAPI(
     title="Spot Price Optimizer API",
     description="API for fetching, storing, and analyzing electricity spot prices.",
     version="1.0.0",
+    lifespan=lifespan,
 )
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
