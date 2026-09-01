@@ -98,9 +98,9 @@ function App() {
           style={{
             marginTop: "1.5rem",
             padding: "1rem",
-            border: "1px solid #e5e7eb",
+            border: "1px solid #123f9a",
             borderRadius: "6px",
-            backgroundColor: "#f9fafb",
+            backgroundColor: "#1d1f21",
             textAlign: "left",
           }}
         >
