@@ -110,7 +110,14 @@ export const OptimizationForm: React.FC<OptimizationFormProps> = ({
         />
       </div>
 
-      <button type="submit" disabled={isLoading} style={{ padding: "0.5rem 1rem", cursor: "pointer" }}>
+      <button type="submit" disabled={isLoading} 
+        style={{ 
+          padding: "0.5rem 1rem", 
+          cursor: "pointer", 
+          border: "1px solid #e5e7eb",
+          borderRadius: "6px",
+          backgroundColor: "#032343" 
+        }}>
         {isLoading ? "Calculating..." : "Find Cheapest Window"}
       </button>
     </form>
