@@ -3,6 +3,7 @@ import { OptimizationForm } from "./components/OptimizationForm";
 import { isAxiosError } from "axios";
 import { getCheapestWindow, getPrices } from "./services/api";
 import type { CheapestWindowResponse, PriceItem, WindowSearchParams } from "./types";
+import "./App.css";
 
 function App() {
   const [prices, setPrices] = useState<PriceItem[]>([]);
@@ -61,15 +62,8 @@ function App() {
   };
 
   return (
-    <main
-      style={{
-        padding: "2rem",
-        maxWidth: "600px",
-        margin: "0 auto",
-        fontFamily: "sans-serif",
-      }}
-    >
-      <h1>Spot Price Optimizer</h1>
+    <main className="app-container">
+      <h1 className="app-title">Spot Price Optimizer</h1>
 
       <OptimizationForm
         maxAvailableHours={maxAvailableHours}
@@ -79,46 +73,40 @@ function App() {
       />
 
       {errorMessage && (
-        <div
-          style={{
-            marginTop: "1.5rem",
-            padding: "0.75rem 1rem",
-            backgroundColor: "#fde8e8",
-            border: "1px solid #f8b4b4",
-            borderRadius: "4px",
-            color: "#9b1c1c",
-          }}
-        >
+        <div className="error-banner">
           {errorMessage}
         </div>
       )}
 
       {cheapestWindow && (
-        <section
-          style={{
-            marginTop: "1.5rem",
-            padding: "1rem",
-            border: "1px solid #123f9a",
-            borderRadius: "6px",
-            backgroundColor: "#1d1f21",
-            textAlign: "left",
-          }}
-        >
-          <h2 style={{ fontSize: "1.25rem", marginTop: 0, marginBottom: "0.75rem" }}>
-            Optimal Window Found
-          </h2>
-          <p style={{ margin: "0.25rem 0" }}>
-            <strong>Start:</strong> {formatTimestamp(cheapestWindow.start_time)}
-          </p>
-          <p style={{ margin: "0.25rem 0" }}>
-            <strong>End:</strong> {formatTimestamp(cheapestWindow.end_time)}
-          </p>
-          <p style={{ margin: "0.25rem 0" }}>
-            <strong>Duration:</strong> {cheapestWindow.duration_hours} h ({cheapestWindow.intervals_count} intervals)
-          </p>
-          <p style={{ margin: "0.25rem 0", fontSize: "1.1rem" }}>
-            <strong>Average Price:</strong> {cheapestWindow.average_price.toFixed(3)} c/kWh
-          </p>
+        <section className="result-card">
+          <h2 className="result-header">Optimal Window Found</h2>
+          
+          <div className="result-highlight">
+            <span className="result-label">Average Price</span>
+            <span className="result-price">
+              {cheapestWindow.average_price.toFixed(3)} c/kWh
+            </span>
+          </div>
+
+          <div className="result-grid">
+            <div className="result-grid-item">
+              <span className="result-label">Start</span>
+              <p>{formatTimestamp(cheapestWindow.start_time)}</p>
+            </div>
+            <div className="result-grid-item">
+              <span className="result-label">End</span>
+              <p>{formatTimestamp(cheapestWindow.end_time)}</p>
+            </div>
+            <div className="result-grid-item">
+              <span className="result-label">Duration</span>
+              <p>{cheapestWindow.duration_hours} h</p>
+            </div>
+            <div className="result-grid-item">
+              <span className="result-label">Intervals</span>
+              <p>{cheapestWindow.intervals_count} intervals</p>
+            </div>
+          </div>
         </section>
       )}
     </main>
