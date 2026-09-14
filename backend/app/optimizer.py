@@ -34,7 +34,11 @@ def find_cheapest_window(
 
     df = df.reset_index(drop=True)
 
-    intervals = int(hours * 4)
+    first_duration_seconds = (df["end_time"].iloc[0] - df["start_time"].iloc[0]).total_seconds()
+    interval_minutes = max(1, int(first_duration_seconds // 60))
+    intervals_per_hour = max(1, 60 // interval_minutes)
+
+    intervals = int(round(hours * intervals_per_hour))
 
     if len(df) < intervals or intervals <= 0:
         return None
